@@ -49,8 +49,14 @@ def build_mlp(
         output_activation = _str_to_activation[output_activation]
     # TODO: return a MLP. This should be an instance of nn.Module
     # Note: nn.Sequential is an instance of nn.Module.
-    raise NotImplementedError
-
+    layers = [nn.Linear(input_size, size), activation]
+    for _ in range(n_layers):
+        layers.append(nn.Linear(size, size))
+        layers.append(activation)
+    layers += [nn.Linear(size, output_size), output_activation]
+    net = nn.Sequential(*layers)
+    print(net)
+    return net
 
 def from_numpy(array):
     return torch.from_numpy(array.astype(np.float32))

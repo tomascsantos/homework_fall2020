@@ -39,6 +39,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
         self.nn_baseline = nn_baseline
 
         if self.discrete:
+            #logits_na is the std of the distribution of actions
             self.logits_na = ptu.build_mlp(input_size=self.ob_dim,
                                            output_size=self.ac_dim,
                                            n_layers=self.n_layers,
@@ -49,6 +50,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
                                         self.learning_rate)
         else:
             self.logits_na = None
+            # mean net is the mean of the distribution of action
             self.mean_net = ptu.build_mlp(input_size=self.ob_dim,
                                           output_size=self.ac_dim,
                                           n_layers=self.n_layers, size=self.size)
@@ -67,13 +69,9 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
     ##################################
 
     def get_action(self, obs: np.ndarray) -> np.ndarray:
-        if len(obs.shape) > 1:
-            observation = obs
-        else:
-            observation = obs[None]
-
-        # TODO return the action that the policy prescribes
-        raise NotImplementedError
+        observation = torch.from_numpy(obs.astype(np.float32))
+        action = self.forward(observation)
+        return action
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -85,7 +83,14 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
     # return more flexible objects, such as a
     # `torch.distributions.Distribution` object. It's up to you!
     def forward(self, observation: torch.FloatTensor) -> Any:
-        raise NotImplementedError
+        if self.discrete:
+            return self.logits_na(observation)
+        else:
+            mean = self.mean_net(observation)
+            std = torch.exp(self.logstd)
+            norm = torch.distributions.multivariate_normal.MultivariateNormal(mean, torch.diag(std))
+            sample = norm.rsample()
+            return sample
 
 
 #####################################################
@@ -94,13 +99,17 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 class MLPPolicySL(MLPPolicy):
     def __init__(self, ac_dim, ob_dim, n_layers, size, **kwargs):
         super().__init__(ac_dim, ob_dim, n_layers, size, **kwargs)
-        self.loss = nn.MSELoss()
+        self.loss_fn = nn.MSELoss()
 
     def update(
             self, observations, actions,
             adv_n=None, acs_labels_na=None, qvals=None
     ):
-        # TODO: update the policy and return the loss
-        loss = TODO
-        # if loss is a torch.Tensor, convert to numpy
+        y = self.get_action(observations)
+        loss = self.loss_fn(y, torch.from_numpy(actions))
+
+        self.optimizer.zero_grad()
+        loss.backward()
+        self.optimizer.step()
+
         return loss.detach().numpy()
