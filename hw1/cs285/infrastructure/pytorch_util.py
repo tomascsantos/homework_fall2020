@@ -2,6 +2,8 @@ from typing import Union
 import torch
 import numpy as np
 from torch import nn
+import torch.nn.functional as F
+
 
 Activation = Union[str, nn.Module]
 
@@ -50,13 +52,30 @@ def build_mlp(
     # TODO: return a MLP. This should be an instance of nn.Module
     # Note: nn.Sequential is an instance of nn.Module.
     layers = [nn.Linear(input_size, size), activation]
-    for _ in range(n_layers):
+    for _ in range(n_layers - 1):
         layers.append(nn.Linear(size, size))
         layers.append(activation)
     layers += [nn.Linear(size, output_size), output_activation]
-    net = nn.Sequential(*layers)
+    old_net = nn.Sequential(*layers)
+    net = Net(input_size, output_size, size)
     print(net)
-    return net
+    print("old net: ", old_net)
+    return old_net
+
+
+class Net(nn.Module):
+
+    def __init__(self, input_size, output_size, size):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(input_size, size)
+        self.fc2 = nn.Linear(size, size)
+        self.fc3 = nn.Linear(size, output_size)
+
+    def forward(self, x):
+        x = F.tanh(self.fc1(x))
+        x = F.tanh(self.fc2(x))
+        x = self.fc3(x)
+        return x
 
 def from_numpy(array):
     return torch.from_numpy(array.astype(np.float32))

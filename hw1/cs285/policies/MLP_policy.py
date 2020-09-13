@@ -2,12 +2,10 @@ import abc
 import itertools
 from typing import Any
 from torch import nn
-from torch.nn import functional as F
 from torch import optim
 
 import numpy as np
 import torch
-from torch import distributions
 
 from cs285.infrastructure import pytorch_util as ptu
 from cs285.policies.base_policy import BasePolicy
@@ -39,7 +37,7 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
         self.nn_baseline = nn_baseline
 
         if self.discrete:
-            #logits_na is the std of the distribution of actions
+            # logits_na is the std of the distribution of actions
             self.logits_na = ptu.build_mlp(input_size=self.ob_dim,
                                            output_size=self.ac_dim,
                                            n_layers=self.n_layers,
@@ -70,8 +68,8 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
 
     def get_action(self, obs: np.ndarray) -> np.ndarray:
         observation = torch.from_numpy(obs.astype(np.float32))
-        action = self.forward(observation)
-        return action
+        action = self.forward(observation).detach().numpy()
+        return action.reshape((1,action.shape[0]))
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -86,11 +84,14 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
         if self.discrete:
             return self.logits_na(observation)
         else:
+
             mean = self.mean_net(observation)
+
             std = torch.exp(self.logstd)
             norm = torch.distributions.multivariate_normal.MultivariateNormal(mean, torch.diag(std))
             sample = norm.rsample()
-            return sample
+
+            return mean
 
 
 #####################################################
@@ -105,11 +106,13 @@ class MLPPolicySL(MLPPolicy):
             self, observations, actions,
             adv_n=None, acs_labels_na=None, qvals=None
     ):
-        y = self.get_action(observations)
+        y = self.forward(torch.tensor(observations, requires_grad=True))
         loss = self.loss_fn(y, torch.from_numpy(actions))
 
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+
+        x = torch.tensor([[1., -1.], [1., 1.]], requires_grad=True)
 
         return loss.detach().numpy()
