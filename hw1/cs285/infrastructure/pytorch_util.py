@@ -56,26 +56,7 @@ def build_mlp(
         layers.append(nn.Linear(size, size))
         layers.append(activation)
     layers += [nn.Linear(size, output_size), output_activation]
-    old_net = nn.Sequential(*layers)
-    net = Net(input_size, output_size, size)
-    print(net)
-    print("old net: ", old_net)
-    return old_net
-
-
-class Net(nn.Module):
-
-    def __init__(self, input_size, output_size, size):
-        super(Net, self).__init__()
-        self.fc1 = nn.Linear(input_size, size)
-        self.fc2 = nn.Linear(size, size)
-        self.fc3 = nn.Linear(size, output_size)
-
-    def forward(self, x):
-        x = F.tanh(self.fc1(x))
-        x = F.tanh(self.fc2(x))
-        x = self.fc3(x)
-        return x
-
+    net = nn.Sequential(*layers)
+    return net
 def from_numpy(array):
     return torch.from_numpy(array.astype(np.float32))

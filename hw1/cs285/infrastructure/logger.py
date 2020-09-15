@@ -23,11 +23,13 @@ class Logger:
         self._summ_writer.add_image('{}'.format(name), image, step)
 
     def log_video(self, video_frames, name, step, fps=10):
+        print("Log video")
         assert len(video_frames.shape) == 5, "Need [N, T, C, H, W] input tensor for video logging!"
         self._summ_writer.add_video('{}'.format(name), video_frames, step, fps=fps)
 
     def log_paths_as_videos(self, paths, step, max_videos_to_save=2, fps=10, video_title='video'):
 
+        print("Log video as path")
         # reshape the rollouts
         videos = [np.transpose(p['image_obs'], [0, 3, 1, 2]) for p in paths]
 

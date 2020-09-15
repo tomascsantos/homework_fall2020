@@ -112,7 +112,4 @@ class MLPPolicySL(MLPPolicy):
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-
-        x = torch.tensor([[1., -1.], [1., 1.]], requires_grad=True)
-
         return loss.detach().numpy()
