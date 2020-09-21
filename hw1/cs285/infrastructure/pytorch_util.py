@@ -1,6 +1,6 @@
 from typing import Union
-
 import torch
+import numpy as np
 from torch import nn
 
 Activation = Union[str, nn.Module]
@@ -29,6 +29,9 @@ def build_mlp(
         Builds a feedforward neural network
 
         arguments:
+            input_placeholder: placeholder variable for the state (batch_size, input_size)
+            scope: variable scope of the network
+
             n_layers: number of hidden layers
             size: dimension of each hidden layer
             activation: activation of each hidden layer
@@ -47,7 +50,13 @@ def build_mlp(
 
     # TODO: return a MLP. This should be an instance of nn.Module
     # Note: nn.Sequential is an instance of nn.Module.
-    raise NotImplementedError
+    layers = [nn.Linear(input_size, size), activation]
+    for _ in range(n_layers - 1):
+        layers.append(nn.Linear(size, size))
+        layers.append(activation)
+    layers += [nn.Linear(size, output_size), output_activation]
+    net = nn.Sequential(*layers)
+    return net
 
 
 device = None
