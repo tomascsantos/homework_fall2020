@@ -1,0 +1,603 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+CS285 HW 2 by Tomas Santos
+\end_layout
+
+\begin_layout Section
+CartPole
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\noindent
+\align center
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/cartpole_sb.png
+	width 60col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Small Batches
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/cartpole_lb.png
+	width 60col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Large Batches
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CartPole Experiment
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Which value estimator has better performance without advantage-standardization:
+ the trajectorycentric one, or the one using reward-to-go?
+\end_layout
+
+\begin_layout Standard
+The plots with names containing 
+\begin_inset Quotes eld
+\end_inset
+
+dsa
+\begin_inset Quotes erd
+\end_inset
+
+ have advantage normalization disabled.
+ In figure (a) this included the orange and blue plots.
+ The blue plot which represent the 
+\begin_inset Quotes eld
+\end_inset
+
+reward to go
+\begin_inset Quotes erd
+\end_inset
+
+ trajectory, trains much more quickly initially but then fails to converge
+ and drops off later.
+ The orange plot trains more slowly and also stays at the peak for less
+ time.
+ Although it seems to get a better recovery the second time around, I think
+ the performace of the blue plot which uses reward to go is better.
+ When we look at the larger batches in figure (b) it's super clear that
+ the reward to go dominates the trajectory centric learner.
+ Thus I conclude that without advantage normalization reward to go has a
+ performance that is confidently superior.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Did advantage standardization help?
+\end_layout
+
+\begin_layout Standard
+The beneficial effect of normalization is most visible with small batches.
+ The red plot is clearly the best performer.
+ In figure (b) the green plot which represents the standardized advantaage
+ performs nearly as good as the red plot.
+ I think that they're close enough to call a tie.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Did the batch size make an impact?
+\end_layout
+
+\begin_layout Standard
+An increase in batch size led to performace enhancements across the board.
+ I would argue it was the most important parameter.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Provide the exact command line configurations (or #@params settings in Colab)
+ you used to run your experiments, including any parameters changed from
+ their defaults.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename plottingdata/cartpole_commands.png
+	width 70page%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+CartPole section of cs285/scripts/run_experiments.ipynb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Inverted Pendulum
+\end_layout
+
+\begin_layout Subsection*
+Given the b* and r* you found, provide a learning curve where the policy
+ gets to optimum (maximum score of 1000) in less than 100 iterations.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/pendulum_combined.png
+	width 70col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Pendulum Experiment
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I included two runs because although using a batch size of 10 and a learning
+ rate of 0.02 (the grey line) technically reaches 1000, it barely manages
+ and then it crashes and never comes close again.
+ The pink line on the other hand (b=100, lr=.02) reached 1000 mark pretty
+ consistently relative to how much fluctuation there was for every run in
+ the pendulum experiement.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Provide the exact command line configurations you used to run your experiments
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/pendulum_code.png
+	width 70page%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Pendulum section of cs285/scripts/run_experiments.ipynb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Lunar Landing
+\end_layout
+
+\begin_layout Subsection*
+Plot a learning curve for the above command.
+ You should expect to achieve an average return of around 180 by the end
+ of training.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/lunar.png
+	width 70page%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Lunar Landing Experiment
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/lunar_code.png
+	width 70page%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Lunar Landing section of cs285/scripts/run_experiments.ipynb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+HalfCheetah
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/cheeta.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Cheeta finding batch size and learning rate
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Provide a single plot with the learning curves for the HalfCheetah experiments
+ that you tried.
+ Describe in words how the batch size and learning rate affected task performanc
+e.
+\end_layout
+
+\begin_layout Standard
+The learning rate of 0.02 was the most effective.
+ At one point in the graph, the 3 highest values all have learning rate
+ of 0.02.
+ The lowest runs all had the smallest learning rate so there is definitely
+ some correlation between learning rate and progress.
+ Seems like the larger the learning rate the better the learner did.
+ The same goes for batch sizes, the larger the better.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/cheeta2.png
+	width 90line%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Cheeta Additional Experiments
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename plottingdata/cheeta3.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Cheeta section of cs285/scripts/run_experiments.ipynb
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

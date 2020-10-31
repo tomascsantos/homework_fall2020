@@ -1,0 +1,406 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+CS285 HW 2 by Tomas Santos
+\end_layout
+
+\begin_layout Section*
+Question 1: basic Q-learning performance.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename mspacman.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+MsPacman-v0
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Question 2: double Q-learning (DDQN)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename averages.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Average DQN vs DDQN
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+It's pretty hard to tell the difference between the ddqn and the dqn.
+ I ended up doing an average over 10 or so runs which led to the above graphs.
+ It seems as though ddqn has a slight edge over the regular dqn, but perhaps
+ this experiement is too simple for the differences to shine through.
+ Unfortunately I don't have time to test it with a longer experiement like
+ MsPacman.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Question 3: experimenting with hyperparameters
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename hparam.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Modifying Batch Size
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I'm very pleased with this plot because it demonstrates exactly what we
+ would expect to see when we vary how early the learning starts.
+ If we immediately try to use 
+\begin_inset Quotes eld
+\end_inset
+
+learned
+\begin_inset Quotes erd
+\end_inset
+
+ values, then they're really just going to be randomly choosen but the algorithm
+ is not goign to explore as much as it should.
+ As a result the learner ends with much lower retrun than either of the
+ other two experiments.
+ The difference between the green and the orange plot are more subtle, but
+ it's clear that the green at one point had the highest return and we can
+ theorize this is because it has the most knowledge of the state space to
+ exploit because it explored the most in the beginning.
+ Another interesting observation is that for the first 10000 or so steps,
+ the learners are all very close to each other.
+ It doesn't even seem like the learner with the most delays 
+\begin_inset Quotes eld
+\end_inset
+
+learning_start
+\begin_inset Quotes erd
+\end_inset
+
+ parameter was significantly handicamped in the beginning and it clearly
+ outshines the others in the end.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Question 4: Sanity check with Cartpole
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename q4.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Different Actor-Critic update step numbers
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Clearly, the worst performing was an actor ciritc with only one update step
+ for both actor and critic.
+ The two highest were 1) when we had 100 update steps for the value function
+ and only one step for updating the target function, and 2) when we updated
+ the target 10 times and the value function 10 times.
+ I presume the later is better even through it's hard to tell from the graph
+ because with only one change to the target function it's possible that
+ we're 
+\begin_inset Quotes eld
+\end_inset
+
+aiming at the wrong target
+\begin_inset Quotes erd
+\end_inset
+
+ and but we're aiming at it really well.
+ I think that's probably why the light blue seems to be about to fall off
+ from the 200 mark and the red one converges solidly.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Question 5: Run actor-critic with more difficult tasks
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename cheeta.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Cheeta
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename inverted.png
+	width 90col%
+
+\end_inset
+
+
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Inverted Pendulum
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

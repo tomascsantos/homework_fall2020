@@ -80,9 +80,10 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
         else:
             observation = obs[None]
 
-        observation = torch.from_numpy(obs.astype(np.float32))
-        action = self.forward(observation).detach().numpy()
-        return action.reshape((1,action.shape[0]))
+        observation = ptu.from_numpy(observation)
+        action_distribution = self(observation)
+        action = action_distribution.sample()  # don't bother with rsample
+        return ptu.to_numpy(action)
 
     # update/train this policy
     def update(self, observations, actions, **kwargs):
@@ -95,16 +96,19 @@ class MLPPolicy(BasePolicy, nn.Module, metaclass=abc.ABCMeta):
     # `torch.distributions.Distribution` object. It's up to you!
     def forward(self, observation: torch.FloatTensor) -> Any:
         if self.discrete:
-            return self.logits_na(observation)
+            logits = self.logits_na(observation)
+            action_distribution = distributions.Categorical(logits=logits)
+            return action_distribution
         else:
-
-            mean = self.mean_net(observation)
-
-            std = torch.exp(self.logstd)
-            norm = torch.distributions.multivariate_normal.MultivariateNormal(mean, torch.diag(std))
-            sample = norm.rsample()
-
-            return mean
+            batch_mean = self.mean_net(observation)
+            scale_tril = torch.diag(torch.exp(self.logstd))
+            batch_dim = batch_mean.shape[0]
+            batch_scale_tril = scale_tril.repeat(batch_dim, 1, 1)
+            action_distribution = distributions.MultivariateNormal(
+                batch_mean,
+                scale_tril=batch_scale_tril,
+            )
+            return action_distribution
 
 
 #####################################################
@@ -119,14 +123,16 @@ class MLPPolicySL(MLPPolicy):
             self, observations, actions,
             adv_n=None, acs_labels_na=None, qvals=None
     ):
-        y = self.forward(torch.tensor(observations, requires_grad=True))
-        loss = self.loss_fn(y, torch.from_numpy(actions))
+        observations = ptu.from_numpy(observations)
+        actions = ptu.from_numpy(actions)
+        action_distribution = self(observations)
+        predicted_actions = action_distribution.rsample()
+        loss = self.loss(predicted_actions, actions)
 
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
 
         return {
-            # You can add extra logging information here, but keep this line
-            'Training Loss': ptu.to_numpy(loss),
+            'Training Loss': ptu.to_numpy(loss)
         }

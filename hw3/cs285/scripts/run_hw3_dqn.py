@@ -64,6 +64,8 @@ def main():
 
     parser.add_argument('--save_params', action='store_true')
 
+    parser.add_argument("--learning_starts", type=int, default=1000)
+
     args = parser.parse_args()
 
     # convert to dictionary
